@@ -10,6 +10,7 @@ class Dict:
 	english_sentences = ["As an administrator, you can add user accounts, set up Mac OS X for multiple users, change certain system settings, and have greater access to the computer.", "Its color, depth, and motion guide you through your tasks, while the Finder and Dock provide easy access to your computer and network.", "Throughout this book, you’ll see questions like the one below.", "The number shows how many messages you have to read.", "Drag items in the toolbar to arrange them.", "You can easily set up your computer for several people by adding user accounts and requiring users to log in.", "For the most security, log in as a user who is not an administrator", "This red icon indicates that you are connected.", "Send short notices to colleagues or pictures of the kids to the folks.", "To see a picture in email you receive from this person, drag the picture here", "This printer is the default.", "If you can’t find this information, look in the applications you use to get email or browse the Web.", "You need to type this name and password exactly the same way if you set up Mac OS X for multiple users.", "When you log in as an administrator you have greater access to the computer, so you may not want to leave your computer unattended.", "Click here to see the system preferences."]
 	spanish_sentences = ["Cuando se accede al ordenador como un administrador, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.", "Su color, profundidad, y movimiento ayudan a guiarlo con sus deberes, el Finder y el Dock permiten acceder al ordenador y conectarse a redes cómodamente.", "A lo largo del manual, observará preguntas como la que aparece a continuación.", " El número indica los mensajes pendientes de lectura.", "Para ordenar los ítems en la barra de herramientas, arrástrelos.", "Podrá configurarlo fácilmente añadiendo cuentas de usuario que requieran el uso de nombres de usuario y contraseñas.", "Para mayor seguridad, inicie la sesión con un usuario distinto al administrador", "Este icono rojo indica que está conectado.", "Envíe notas cortas a sus compañeros o mande fotografías de sus hijos a otras personas.", "Para visualizar una imagen incluida en un mensaje de esa persona, arrástrela hasta aquí.", "Ésta es la impresora por omisión.", "Si no encuentra la información, búsquela en la aplicación de correo o en el navegador web.", "Escriba el nombre y la contraseña exactamente igual que si configurase el Mac OS X para múltiples usuarios.", "Cuando se inicia la sesión como administrador se dispone de mayores privilegios de acceso, por lo que no conviene abandonar el ordenador.", "Haga clic aquí para visualizar las preferencias del sistema."]
 
+
 	#build dictionary set
 	f_set = set()
 	for sentence in spanish_sentences:
@@ -32,6 +33,7 @@ class Dict:
 		'arrástrelos': ['drag them'],
 		'ayudan': ['help', 'assist', 'aid', 'abet', 'pull up', 'advance', 'boost', 'dole', 'subserve', 'favor', 'help out', 'support', 'lend a hand', 'tide over', 'help along'],
 		'añadirse': ['add', 'lend'],
+		'añadiendo': ['adding'], #NEEDS MORE
 		'barra': ['bar', 'rod', 'pole', 'stick'],
 		'búsquela': ['search for it'],
 		'cambiar': ['change', 'exchange', 'switch', 'swap', 'swop', 'alter', 'vary', 'swing', 'turn around', 'shift', 'transfer', 'dislocate', 'swap around', 'swap round', 'swap over', 'distort'],
@@ -45,6 +47,7 @@ class Dict:
 		'conectar': ['connect', 'plug in', 'plumb in', 'log in'],
 		'configurar': ['configure', 'form'],
 		'configurarlo': ['configure it'],
+		'conectarse': ['connect'], #NEEDS MORE
 		'continuación': ['continuation', 'sequel', 'continuance', 'carrying-on', 'resumption', 'ongoing', 'follow', 'prosecution'],
 		'contraseña': ['password'],
 		'contraseñas': ['passwords'],
@@ -61,17 +64,18 @@ class Dict:
 		'dispone': ['available', 'provides', 'disposes', 'arranges', 'orders', 'lays down', 'sets out', 'lays out', 'ordains', 'frames', 'prepares', 'readies', 'dictates', 'commands', 'forms up', 'lines up', 'trims'],
 		'disponer': ['available', 'provide', 'dispose', 'arrange', 'order', 'lay down', 'set out', 'lay out', 'ordain', 'frame', 'prepare', 'ready', 'dictate', 'command', 'form up', 'line up', 'trim'],
 		'distinto': ['different', 'dissimilar', 'distinct', 'separate', 'diverse', 'varied', 'several'],
-		'Dock': ['Dock'],
+		'dock': ['Dock'],
 		'el': ['the'],
 		'en': ['in', 'on', 'at', 'to', 'into', 'for', 'by', 'about'],
 		'encuentra': ['found', 'finds', 'locates', 'espies', 'spots', 'meets', 'encounters', 'comes upon', 'traces', 'pitches upon'],
 		'es': ['is'],
+		'este': ['this'], #NEEDS MORE
 		'esa': ['that'],
 		'está': ['is'],
 		'envíe': ['submits', 'sends', 'posts', 'ships', 'taps out', 'forwards', 'dispatches', 'despatches', 'remits', 'consigns', 'extends', 'sends away', 'packs off'],
 		'escriba': ['scribe', 'write'],
 		'exactamente': ['exactly', 'just', 'precisely', 'accurately', 'quite', 'strictly', 'punctually', 'correctly', 'right', 'truly'],
-		'Finder': ['Finder'],
+		'finder': ['Finder'],
 		'fotografías': ['photographs', 'pictures', 'photographies', 'photos'],
 		'fácilmente': ['easily', 'easy', 'readily', 'with ease'],
 		'general': ['general', 'broad', 'extensive', 'blanket', 'sweeping', 'catch-all', 'omnibus'],
@@ -110,7 +114,7 @@ class Dict:
 		'si': ['if', 'whether', 'once', 'supposing'],
 		'sesión': ['session', 'sitting', 'meeting', 'performance'],
 		'seguridad': ['security', 'safety', 'safeness', 'reliability', 'sureness', 'assurance', 'assuredness', 'certain', 'certainty', 'certitude'],
-		'se': [''],
+		'se': ['NULL'],
 		'requieran': ['require', 'want'],
 		'redes': ['networks'],
 		'rojo': ['red'],
@@ -120,6 +124,7 @@ class Dict:
 		'privilegios': ['privileges', 'concession', 'charter', 'right'],
 		'preguntas': ['questions'],
 		'preferencias': ['preferences', 'choices'],
+		'podrá': ['one can'], #NEEDS MORE
 		'por': ['by', 'for', 'per', 'to', 'through', 'because of', 'out of', 'as', 'via', 'at', 'after', 'around', 'about', 'along', 'out', 'down'],
 		'personas': ['people'],
 		'persona': ['person'],
@@ -152,9 +157,11 @@ class Dict:
 		'múltiple': ['numerous', 'multiple','manifold','multifold','multifarious'],
 		'ordenador': ['computer'],
 		'os': ['OS'],
+		'su': ['his'], #NEEDS MORE
 		'otro': ['other', 'another','another one'],
 		'poder': ['can', 'be able to','may','might'],
 		'tal': ['such', 'that', 'just as'],
 		'usuario': ['user', 'username','reader'],
+		'Usuarios': ['users'],
 		'x': ['X'],
 	}

@@ -43,6 +43,7 @@ class Translator:
 		for i in range(1, len(words)):
 			word = words[i]
 			# print "word is %s" % word
+			word = word.lower()
 			punct = ""
 			if ',' in word or '.' in word:
 				punct = word[len(word) - 1]
@@ -56,6 +57,7 @@ class Translator:
 			# return self.best_cand(cands, punct, i, words[i - 1])
 		print "original sentence: %s" % sentence
 		print "translated sentence: %s" % e_translate 
+
 
 	# def remove_parens(self, sentence):
 	# 	final = ""
@@ -80,7 +82,14 @@ def main():
     tranny = Translator()
     tranny.translate_sentence("Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
     tranny.build_bigram('giddycorpus.txt')
-    tranny.use_word_bigram("Cuando accede al ordenador como un administrador, pueden añadirse otros usuarios, configurar")
+    # tranny.use_word_bigram("Cuando accede al ordenador como un administrador, pueden añadirse otros usuarios, configurar")
+    for i in range (0, 10):
+    	sentence = tranny.dictionary.spanish_sentences[i]
+    	print "number: %d" % i
+    	tranny.use_word_bigram(sentence)
+    	print tranny.dictionary.english_sentences[i]
+    	print " "
+
 
 if __name__ == '__main__':
     main()
