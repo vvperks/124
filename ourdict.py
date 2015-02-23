@@ -134,7 +134,7 @@ class Dict:
 		'o': ['or', 'either'],
 		'número': ['number','issue' ,'turn', 'act' ,'figure' ,'numeral' , 'copy', 'size', 'circulation'],
 		'notas': ['notes', 'grades', 'you notice', 'you will notice', 'you will see'],
-		'nombres': ['names'],
+		'nombres': ['names'], #comment
 		'nombre': ['name', 'forename' ,'appelation', 'cognomen','noun'],
 		'no': ['no', 'don\'t','not', 'nay'],
 		'navegador': ['navigator', 'browser'],
