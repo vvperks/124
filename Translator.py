@@ -55,8 +55,8 @@ class Translator:
 				e_translate += punct
 			e_translate += " "
 			# return self.best_cand(cands, punct, i, words[i - 1])
-		print "original sentence: %s" % sentence
-		print "translated sentence: %s" % e_translate 
+		print "***ORIGINAL SENTENCE***: %s" % sentence
+		print "***OUR TRANSLATION***: %s" % e_translate
 
 
 	# def remove_parens(self, sentence):
@@ -87,7 +87,7 @@ def main():
     	sentence = tranny.dictionary.spanish_sentences[i]
     	print "number: %d" % i
     	tranny.use_word_bigram(sentence)
-    	print tranny.dictionary.english_sentences[i]
+    	print "***ACTUAL TRANSLATION***: %s" % tranny.dictionary.english_sentences[i]
     	print " "
 
 
