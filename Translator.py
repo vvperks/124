@@ -6,7 +6,7 @@ import pprint
 import itertools as it
 import re
 import ourdict
-from nlp_tools import Tokenizer, Tagger, Stemmer
+#from nlp_tools import Tokenizer, Tagger, Stemmer
 from LaplaceBigramLanguageModel import LaplaceBigramLanguageModel
 from ourdict import Dict
 
