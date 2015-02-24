@@ -3,6 +3,7 @@
 # Simple translator for a culled corpus
 
 import pprint
+import math
 import itertools as it
 import re
 import ourdict
@@ -26,11 +27,17 @@ class Translator:
 				e_word = d.dictionary[word][0]
 
 	def best_cand(self, cands, punct, index, preword):
-		best = ""
-		top_score = 0.0
+		best = "NULLkkk"
+		top_score = -20.0
 		for cand in cands:
+			score = 0.0
 			bigram = "%s-%s" % (preword, cand)
-			score = self.word_bigram_model.word_bigramCounts[bigram]
+			# print "bigram count for %s is %d" % (bigram, self.word_bigram_model.word_bigramCounts[bigram])
+			score += math.log(self.word_bigram_model.word_bigramCounts[bigram])
+			# print "unigram count for %s is %d" % (preword, self.word_bigram_model.word_unigramCounts[preword])
+			score -= math.log(self.word_bigram_model.word_unigramCounts[preword])
+			# print "this score: %d" % score
+			# print "top score: %d" % top_score
 			if (score > top_score):
 				best = cand
 				top_score = score
@@ -50,6 +57,11 @@ class Translator:
 				word = word[:-1]
 				# print "new word: %s" % word
 			cands = self.dictionary.dictionary[word]
+			# print "current translation: %s" % e_translate
+			# print "num e_translate indexes: %d" % len(e_translate.split())
+			# if (e_translate):
+				# print i
+				# print "first element: %s" % e_translate.split()[i - 1]
 			e_translate += self.best_cand(cands, punct, i, e_translate.split()[i - 1])
 			if (punct):
 				e_translate += punct

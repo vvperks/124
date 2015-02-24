@@ -29,6 +29,7 @@ class LaplaceBigramLanguageModel:
         bigram = "%s-%s" % (elems[1], elems[2])
         count = int(elems[0])
         self.word_bigramCounts[bigram] += count
+        self.word_unigramCounts[elems[1]] += count
 
     # Trains bigram model for 
     # for sentence in sentences:
