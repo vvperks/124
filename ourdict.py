@@ -30,7 +30,7 @@ class Dict:
         'añadirse': ['add', 'lend'],
         'aparece': ['appears', 'shows','shows up', 'turns up', 'comes into view', 'emerge', 'come out', 'come on the scene', 'loom up', 'loom', 'arrive', 'come up', 'walk', 'intervene', 'develop'],
         'aplicación': ['application', 'enforcement'],
-        'aquí': ['here', 'hither'],
+        'aquí': ['here', 'hither'], #
         'arrástrela': ['drag it'],
         'arrástrelos': ['drag them'],
         'ayudan': ['help', 'assist', 'aid', 'abet', 'pull up', 'advance', 'boost', 'dole', 'subserve', 'favor', 'help out', 'support', 'lend a hand', 'tide over', 'help along'],
