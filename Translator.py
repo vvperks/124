@@ -6,12 +6,11 @@ import re
 import ourdict
 from LaplaceBigramLanguageModel import LaplaceBigramLanguageModel
 from nlp_tools import Tokenizer
-
 import parse
 
 class Translator:
 	
-	def __init__(self, bigram_count_file_name):
+	def __init__(self, bigram_count_file_name, bigram_model_pickle='bigram_model.pickle'):
 		self.dictionary = ourdict.dictionary
 		self.tokenizer = Tokenizer()
 		with open(bigram_count_file_name, 'r') as f:
@@ -35,9 +34,8 @@ class Translator:
 		translation = self.format(translated_tokens)
 		###########################################################
 		# or as functions of sentence and returning sentence HERE #
+		translation = self.reverse_noun_adj([translation])		  #
 		###########################################################
-		print "***ORIGINAL SENTENCE***: %s" % sentence
-		print "***OUR TRANSLATION***: %s" % translation
 		return translation
 
 	def find_next_word(self, word, current_translation):
@@ -58,24 +56,45 @@ class Translator:
 		s = " ".join(token_list[1:])	# Remove the leading start token and turn into a spaced string
 		s = re.sub(r' ([\.,])', r'\1', s)	# Remove whitespace before punctuation
 		s = s[0].upper() + s[1:]		# Capitalize the sentence
-		return s
+		return s		
 
 	###########################################################
 	# ADD YOUR PREPROCESSING + POSTPROCESSING FUNCTIONS HERE. #
 	###########################################################
 
+	def reverse_noun_adj(self, s):
+		noun_tags = set(['NNP', 'NN', 'NNS'])
+		adj_tags = set(['JJ'])
+		parsed = parse.parse_english(s)[0]
+		# print parsed
+		words = parsed.words
+		for i in range(len(words)-1):
+			if parsed.tags[i] in noun_tags:
+				if parsed.tags[i+1] in adj_tags:
+					w = words[i]
+					words[i] = words[i+1]
+					words[i+1] = w
+					# print ">>>> SWITCHED %s and %s" % (w, words[i])
+		words = ['^'] + words # stupid hack to make the formatting work
+		# print words
+		s = self.format(words)
+		return s
+
 def main():
     """Tests the model on the command line. This won't be called in
         scoring, so if you change anything here it should only be code
         that you use in testing the behavior of the model."""
-    
+
+    print 'Building translator...'
     tranny = Translator('giddycorpus.txt')
     tranny.translate_sentence("Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
     for i, (spanish_sentence, english_sentence) in enumerate(zip(ourdict.spanish_sentences, ourdict.english_sentences)):
     	translation = tranny.translate_sentence(spanish_sentence)
     	print "number: %d" % i
+    	print "***ORIGINAL SENTENCE***: %s" % spanish_sentence
+    	print "***OUR TRANSLATION***: %s" % translation
     	print "***ACTUAL TRANSLATION***: %s" % english_sentence
-    	print " "
+    	print "\n"
 
 
 if __name__ == '__main__':

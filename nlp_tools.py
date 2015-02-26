@@ -18,14 +18,14 @@ tags = tagger.tag(tokens)
 stems = stemmer.stem(tokens)
 '''
 
-import nltk
+from nltk import word_tokenize
 import pickle
 import os.path
 
 ##################### TOKENIZATION #########################
 class Tokenizer:
 	def __init__(self):
-		self.tokenizer = nltk.word_tokenize
+		self.tokenizer = word_tokenize
 	def tokenize(self, sentence):
 		return self.tokenizer(sentence)
 

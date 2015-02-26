@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET 		# to parse the XML output of CoreNLP
 def main():
 	# ________________________SPANISH ANNOTATION EXAMPLE___________________________________
 	# Sample sentences that we need parsed and annotated
-	spanish_sentences = ['Hola, como estas?', 'Me llamo Alejandro.', 'Ellos se llaman Eric, Pearson, y Gideon.']
+	spanish_sentences = ['Hola, como estas?', 'Me llamo Alejandro.', 'Ellos se llaman Eric, Pearson, y Gideon.', 'El gato gris solitario come mucho.']
 	# Call the spanish parser/annotator and get back a list of parsed sentence objects
 	parsed_spanish_sentences = parse_spanish(spanish_sentences)
 	# Print some output
@@ -13,7 +13,7 @@ def main():
 
 	# ________________________ENGLISH ANNOTATION EXAMPLE___________________________________
 	# Sample sentences that we need parsed and annotated
-	english_sentences = ['Hi, how are you?', 'My name is Alejandro.', 'Their names are Eric, Pearson, and Gideon.']
+	english_sentences = ['Hi, how are you?', 'My name is Alejandro.', 'Their names are Eric, Pearson, and Gideon.', 'The lonely gray cat eats a lot.']
 	# Call the english parser/annotator and get back an xml object root node
 	parsed_english_sentences = parse_english(english_sentences)
 	# Print some output
