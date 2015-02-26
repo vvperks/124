@@ -18,12 +18,24 @@ class Translator:
 			self.bigram_model = LaplaceBigramLanguageModel(f)
 
 	def translate_sentence(self, sentence):
+		###################################################################################
+		# Call PRE-processing rules as functions of sentence and returning sentences HERE #
+		###################################################################################
 		tokens = self.tokenizer.tokenize(sentence)
+		###############################################################
+		# or as functions of token list and returning toke list HERE. #
+		###############################################################
 		translated_tokens = ['^'] # Arbitrary start token
 		for token in tokens:
 			token = token.lower()
 			translated_tokens.append(self.find_next_word(token, translated_tokens))
+		#######################################################################################
+		# Call POST-processing rules as functions of token list and returning token list HERE #
+		#######################################################################################	
 		translation = self.format(translated_tokens)
+		###########################################################
+		# or as functions of sentence and returning sentence HERE #
+		###########################################################
 		print "***ORIGINAL SENTENCE***: %s" % sentence
 		print "***OUR TRANSLATION***: %s" % translation
 		return translation
@@ -47,6 +59,10 @@ class Translator:
 		s = re.sub(' ([.,])', '\0', s)	# Remove whitespace before punctuation
 		s = s[0].upper() + s[1:]		# Capitalize the sentence
 		return s
+
+	###########################################################
+	# ADD YOUR PREPROCESSING + POSTPROCESSING FUNCTIONS HERE. #
+	###########################################################
 
 def main():
     """Tests the model on the command line. This won't be called in
