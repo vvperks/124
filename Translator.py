@@ -56,7 +56,7 @@ class Translator:
 	def format(self, token_list):
 		''' takes the list of translated words and formats it nicely for printing '''
 		s = " ".join(token_list[1:])	# Remove the leading start token and turn into a spaced string
-		s = re.sub(' ([.,])', '\0', s)	# Remove whitespace before punctuation
+		s = re.sub(r' ([\.,])', r'\1', s)	# Remove whitespace before punctuation
 		s = s[0].upper() + s[1:]		# Capitalize the sentence
 		return s
 
