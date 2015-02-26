@@ -17,14 +17,14 @@ class Translator:
 		self.dictionary = Dict()
 		# self.word_bigram_model = LaplaceBigramLanguageModel
 
-	def translate_sentence(self, sentence):
-		words = []
-		words = re.split('[^\wñáéíóúÁÉÍÓÚ]', sentence)
-		d = ourdict.Dict()
-		for word in words:
-			if (word):
-				word = word.lower()
-				e_word = d.dictionary[word][0]
+	# def translate_sentence(self, sentence):
+	# 	words = []
+	# 	words = re.split('[^\wñáéíóúÁÉÍÓÚ]', sentence)
+	# 	d = ourdict.Dict()
+	# 	for word in words:
+	# 		if (word):
+	# 			word = word.lower()
+	# 			e_word = d.dictionary[word][0]
 
 	def best_cand(self, cands, punct, index, preword):
 		best = "NULLkkk"
@@ -44,24 +44,25 @@ class Translator:
 		return best
 
 	#corpus
-	def use_word_bigram(self, sentence):
+	def translate_sentence(self, sentence):
 		words = sentence.split()
-		e_translate = self.dictionary.dictionary[(words[0]).lower()][0] + " "
+		#check for punction
+		if (',' in words[0] or '.' in words[0]):
+			punct = words[0][len(words[0]) - 1]
+			e_translate = self.dictionary.dictionary[(words[0][:-1]).lower()][0] + punct + " "
+		else:
+			e_translate = self.dictionary.dictionary[(words[0]).lower()][0] + " " #we might consider deferring to unigram prob here
 		for i in range(1, len(words)):
-			word = words[i]
-			# print "word is %s" % word
-			word = word.lower()
+			word = (words[i]).lower()
+			#check for 'se'
+			if (word == "se"):
+				word = "usted"
 			punct = ""
 			if ',' in word or '.' in word:
 				punct = word[len(word) - 1]
 				word = word[:-1]
 				# print "new word: %s" % word
 			cands = self.dictionary.dictionary[word]
-			# print "current translation: %s" % e_translate
-			# print "num e_translate indexes: %d" % len(e_translate.split())
-			# if (e_translate):
-				# print i
-				# print "first element: %s" % e_translate.split()[i - 1]
 			e_translate += self.best_cand(cands, punct, i, e_translate.split()[i - 1])
 			if (punct):
 				e_translate += punct
@@ -92,13 +93,13 @@ def main():
         that you use in testing the behavior of the model."""
     
     tranny = Translator()
-    tranny.translate_sentence("Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
+    # tranny.translate_sentence("Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
     tranny.build_bigram('giddycorpus.txt')
     # tranny.use_word_bigram("Cuando accede al ordenador como un administrador, pueden añadirse otros usuarios, configurar")
     for i in range (0, 10):
     	sentence = tranny.dictionary.spanish_sentences[i]
     	print "number: %d" % i
-    	tranny.use_word_bigram(sentence)
+    	tranny.translate_sentence(sentence)
     	print "***ACTUAL TRANSLATION***: %s" % tranny.dictionary.english_sentences[i]
     	print " "
 
