@@ -2,104 +2,63 @@
 # coding: utf-8
 # Simple translator for a culled corpus
 
-import pprint
-import math
-import itertools as it
 import re
 import ourdict
-#from nlp_tools import Tokenizer, Tagger, Stemmer
 from LaplaceBigramLanguageModel import LaplaceBigramLanguageModel
-from ourdict import Dict
+from nlp_tools import Tokenizer
+
+import parse
 
 class Translator:
 	
-	def __init__(self):
-		self.dictionary = Dict()
-		# self.word_bigram_model = LaplaceBigramLanguageModel
+	def __init__(self, bigram_count_file_name):
+		self.dictionary = ourdict.dictionary
+		self.tokenizer = Tokenizer()
+		with open(bigram_count_file_name, 'r') as f:
+			self.bigram_model = LaplaceBigramLanguageModel(f)
 
 	def translate_sentence(self, sentence):
-		words = []
-		words = re.split('[^\wñáéíóúÁÉÍÓÚ]', sentence)
-		d = ourdict.Dict()
-		for word in words:
-			if (word):
-				word = word.lower()
-				e_word = d.dictionary[word][0]
+		tokens = self.tokenizer.tokenize(sentence)
+		translated_tokens = ['^'] # Arbitrary start token
+		for token in tokens:
+			token = token.lower()
+			translated_tokens.append(self.find_next_word(token, translated_tokens))
+		translation = self.format(translated_tokens)
+		print "***ORIGINAL SENTENCE***: %s" % sentence
+		print "***OUR TRANSLATION***: %s" % translation
+		return translation
 
-	def best_cand(self, cands, punct, index, preword):
-		best = "NULLkkk"
-		top_score = -20.0
-		for cand in cands:
-			score = 0.0
-			bigram = "%s-%s" % (preword, cand)
-			# print "bigram count for %s is %d" % (bigram, self.word_bigram_model.word_bigramCounts[bigram])
-			score += math.log(self.word_bigram_model.word_bigramCounts[bigram])
-			# print "unigram count for %s is %d" % (preword, self.word_bigram_model.word_unigramCounts[preword])
-			score -= math.log(self.word_bigram_model.word_unigramCounts[preword])
-			# print "this score: %d" % score
-			# print "top score: %d" % top_score
+	def find_next_word(self, word, current_translation):
+		candidate_words = self.dictionary[word]
+		top_score = float("-inf")
+		prev_word = current_translation[-1]
+		if (prev_word == ',') or (prev_word == '.'):
+			prev_word = current_translation[-2] 	# If the previous token is punctuation, get what's before it
+		for word in candidate_words:
+			score = self.bigram_model.score([prev_word, word])
 			if (score > top_score):
-				best = cand
+				best = word
 				top_score = score
 		return best
 
-	#corpus
-	def use_word_bigram(self, sentence):
-		words = sentence.split()
-		e_translate = self.dictionary.dictionary[(words[0]).lower()][0] + " "
-		for i in range(1, len(words)):
-			word = words[i]
-			# print "word is %s" % word
-			word = word.lower()
-			punct = ""
-			if ',' in word or '.' in word:
-				punct = word[len(word) - 1]
-				word = word[:-1]
-				# print "new word: %s" % word
-			cands = self.dictionary.dictionary[word]
-			# print "current translation: %s" % e_translate
-			# print "num e_translate indexes: %d" % len(e_translate.split())
-			# if (e_translate):
-				# print i
-				# print "first element: %s" % e_translate.split()[i - 1]
-			e_translate += self.best_cand(cands, punct, i, e_translate.split()[i - 1])
-			if (punct):
-				e_translate += punct
-			e_translate += " "
-			# return self.best_cand(cands, punct, i, words[i - 1])
-		print "***ORIGINAL SENTENCE***: %s" % sentence
-		print "***OUR TRANSLATION***: %s" % e_translate
-
-
-	# def remove_parens(self, sentence):
-	# 	final = ""
-	# 	for word in sentence:
-	# 		if word[0] != "(":
-	# 			final += word + " "
-	# 	return final
-
-	#bigram classifier
-	def build_bigram(self, corpus):
-		f = open(corpus)
-		self.word_bigram_model = LaplaceBigramLanguageModel(f)	
-
-
-	# print re.split('[^\wñáéíóúÁÉÍÓÚ]',"Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
+	def format(self, token_list):
+		''' takes the list of translated words and formats it nicely for printing '''
+		s = " ".join(token_list[1:])	# Remove the leading start token and turn into a spaced string
+		s = re.sub(' ([.,])', '\0', s)	# Remove whitespace before punctuation
+		s = s[0].upper() + s[1:]		# Capitalize the sentence
+		return s
 
 def main():
     """Tests the model on the command line. This won't be called in
         scoring, so if you change anything here it should only be code
         that you use in testing the behavior of the model."""
     
-    tranny = Translator()
+    tranny = Translator('giddycorpus.txt')
     tranny.translate_sentence("Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
-    tranny.build_bigram('giddycorpus.txt')
-    # tranny.use_word_bigram("Cuando accede al ordenador como un administrador, pueden añadirse otros usuarios, configurar")
-    for i in range (0, 10):
-    	sentence = tranny.dictionary.spanish_sentences[i]
+    for i, (spanish_sentence, english_sentence) in enumerate(zip(ourdict.spanish_sentences, ourdict.english_sentences)):
+    	translation = tranny.translate_sentence(spanish_sentence)
     	print "number: %d" % i
-    	tranny.use_word_bigram(sentence)
-    	print "***ACTUAL TRANSLATION***: %s" % tranny.dictionary.english_sentences[i]
+    	print "***ACTUAL TRANSLATION***: %s" % english_sentence
     	print " "
 
 
