@@ -28,19 +28,36 @@ class Translator:
 		# or as functions of token list and returning toke list HERE. #
 		tokens = self.remove_se(tokens)
 		###############################################################
-		translated_tokens = ['^'] # Arbitrary start token
-		for token in tokens:
-			token = token.lower()
-			translated_tokens.append(self.find_next_word(token, translated_tokens))
+		translated_tokens = ['^'] # Arbitrary start 
+		for i in range(0, len(tokens)):
+			token = tokens[i].lower()
+			if (token == "para"):
+				translated_tokens.append(self.para_process(token, tokens[i + 1]))
+			else:
+				translated_tokens.append(self.find_next_word(token, translated_tokens))
+
+		# for token in tokens:
+		# 	token = token.lower()
+		# 	translated_tokens.append(self.find_next_word(token, translated_tokens))
 		#######################################################################################
 		# Call POST-processing rules as functions of token list and returning token list HERE #
 		#######################################################################################	
 		translation = self.format(translated_tokens)
 		###########################################################
 		# or as functions of sentence and returning sentence HERE #
-		#translation = self.reverse_noun_adj([translation])		  #
+		# translation = self.reverse_noun_adj([translation])		  #
 		###########################################################
 		return translation
+
+	def para_process(self, para, next_word):
+		if (len(next_word) > 1):
+			suffix = next_word[len(next_word)-2:]
+			print "suffix: %s" % suffix
+			if suffix == 'ar' or suffix == 'er' or suffix == 'ir':
+				return 'to'
+			else:
+				return 'for'
+		return 'for'
 
 	def find_next_word(self, word, current_translation):
 		candidate_words = self.dictionary[word]
@@ -106,6 +123,8 @@ def main():
     tranny = Translator('giddycorpus.txt')
     tranny.translate_sentence("Cuando se accede al ordenador como tal, pueden añadirse otros usuarios, configurar Usuarios Múltiples de Mac OS X, cambiar determinados ajustes del sistema y, en general, disponer de mayor acceso al sistema.")
     for i, (spanish_sentence, english_sentence) in enumerate(zip(ourdict.spanish_sentences, ourdict.english_sentences)):
+     	#spanish_sentence = ourdict.spanish_sentences[i]
+     	#english_sentence = ourdict.english_sentences[i]
     	translation = tranny.translate_sentence(spanish_sentence)
     	print "number: %d" % i
     	print "***ORIGINAL SENTENCE***: %s" % spanish_sentence

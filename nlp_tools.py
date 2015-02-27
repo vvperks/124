@@ -42,7 +42,7 @@ class Tagger:
 			sents = cess_esp.tagged_sents()
 			unigram_tagger = UnigramTagger(sents)
 			bigram_tagger = BigramTagger(sents, backoff=unigram_tagger) # uses unigram tagger in case it can't tag a word
-			self.tagger = bigram_tagger
+			self.tagger = unigram_tagger
 			with open('tagger_spanish.pickle', 'w') as file_obj:
 			    pickle.dump(self.tagger, file_obj)		# Dump trained tagger
 	def tag(self, tokens):
