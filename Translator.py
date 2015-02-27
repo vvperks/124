@@ -26,6 +26,7 @@ class Translator:
 		tokens = self.tokenizer.tokenize(sentence)
 		###############################################################
 		# or as functions of token list and returning toke list HERE. #
+		tokens = self.remove_se(tokens)
 		###############################################################
 		translated_tokens = ['^'] # Arbitrary start token
 		for token in tokens:
@@ -49,9 +50,6 @@ class Translator:
 			prev_word = current_translation[-2] 	# If the previous token is punctuation, get what's before it
 		for word in candidate_words:
 			# score = self.bigram_model.score([prev_word, word])
-			# print "word: %s" % word
-			# print "bigram score: %d" % self.bigram_model.score([prev_word, word])
-			# print "unigram score: %d" % self.unigram_model.score([word])
 			score = self.bigram_model.score([prev_word, word]) + self.unigram_model.score([word])
 
 			if (score > top_score):
@@ -87,6 +85,17 @@ class Translator:
 		# print words
 		s = self.format(words)
 		return s
+
+	def remove_se(self, spanish_tokens):
+		new_tokens = []
+		for t in spanish_tokens:
+			if t != "se":
+				new_tokens.append(t)
+			else:
+				new_tokens.append("usted")
+		return new_tokens
+
+
 
 def main():
     """Tests the model on the command line. This won't be called in
