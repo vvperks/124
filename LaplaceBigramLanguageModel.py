@@ -1,6 +1,6 @@
 import math, collections
 
-class LaplaceBigramLanguageModel:
+class LaplaceBigramModel:
 
   def __init__(self, bigram_count_file):
     """Initialize your data structures in the constructor."""

@@ -4,7 +4,8 @@
 
 import re
 import ourdict
-from LaplaceBigramLanguageModel import LaplaceBigramLanguageModel
+from LaplaceBigramLanguageModel import LaplaceBigramModel
+from unigram_model import LaplaceUnigramModel
 from nlp_tools import Tokenizer
 import parse
 
@@ -14,7 +15,9 @@ class Translator:
 		self.dictionary = ourdict.dictionary
 		self.tokenizer = Tokenizer()
 		with open(bigram_count_file_name, 'r') as f:
-			self.bigram_model = LaplaceBigramLanguageModel(f)
+			self.bigram_model = LaplaceBigramModel(f)
+		with open(bigram_count_file_name, 'r') as f:
+			self.unigram_model = LaplaceUnigramModel(f)
 
 	def translate_sentence(self, sentence):
 		###################################################################################
@@ -34,7 +37,7 @@ class Translator:
 		translation = self.format(translated_tokens)
 		###########################################################
 		# or as functions of sentence and returning sentence HERE #
-		translation = self.reverse_noun_adj([translation])		  #
+		#translation = self.reverse_noun_adj([translation])		  #
 		###########################################################
 		return translation
 
@@ -45,7 +48,8 @@ class Translator:
 		if (prev_word == ',') or (prev_word == '.'):
 			prev_word = current_translation[-2] 	# If the previous token is punctuation, get what's before it
 		for word in candidate_words:
-			score = self.bigram_model.score([prev_word, word])
+			# score = self.bigram_model.score([prev_word, word])
+			score = self.bigram_model.score([prev_word, word]) + self.unigram_model.score([word])
 			if (score > top_score):
 				best = word
 				top_score = score

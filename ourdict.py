@@ -143,7 +143,7 @@ dictionary = {
 'redes': ['networks'],
 'requieran': ['require', 'want'],
 'rojo': ['red'],
-'se': ['NULLkkk'],
+'se': ['se'],
 'seguridad': ['security', 'safety', 'safeness', 'reliability', 'sureness', 'assurance', 'assuredness', 'certain', 'certainty', 'certitude'],
 'sesión': ['session', 'sitting', 'meeting', 'performance'],
 'si': ['if', 'whether', 'once', 'supposing'],
