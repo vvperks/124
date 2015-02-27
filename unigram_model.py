@@ -15,17 +15,24 @@ class LaplaceUnigramModel:
     
     first = True
     for line in corpus:
-      middle = line.split()[1]
-      num = line.split()[0]
-      if (first):
-        uni_word = middle
-        self.total += 1
-        first = False
-      elif middle != uni_word:
-        uni_word = middle
-        self.total += 1
-      self.unigramLapCounts[uni_word] += int(num)
-    self.total += len(self.unigramLapCounts)
+      line = line.split()
+      for word in line: 
+        if not self.unigramLapCounts[word]:
+          self.total += 1 
+        self.unigramLapCounts[word] += 1
+
+###
+    #   middle = line.split()[1]
+    #   num = line.split()[0]
+    #   if (first):
+    #     uni_word = middle
+    #     self.total += 1
+    #     first = False
+    #   elif middle != uni_word:
+    #     uni_word = middle
+    #     self.total += 1
+    #   self.unigramLapCounts[uni_word] += int(num)
+    # self.total += len(self.unigramLapCounts)
     pass
 
   def score(self, sentence):
