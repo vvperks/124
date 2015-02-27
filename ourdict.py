@@ -9,7 +9,7 @@ spanish_sentences = ["Cuando se accede al ordenador como un administrador, puede
 #build dictionary set
 # f_set = set()
 # for sentence in spanish_sentences:
-# 	f_set = f_set.union(sentence.split())
+#       f_set = f_set.union(sentence.split())
 # f_set = sorted(f_set)
 
 dictionary = {
@@ -30,9 +30,9 @@ dictionary = {
 'aquí': ['here', 'hither'], #
 'arrástrela': ['drag it'],
 'arrástrelos': ['drag them'],
-'ayudan': ['help', 'assist', 'aid', 'abet', 'pull up', 'advance', 'boost', 'dole', 'subserve', 'favor', 'help out', 'support', 'lend a hand', 'tide over', 'help along'],
+'ayudan': ['they help','help','they assist', 'they assist', 'assist', 'they aid','aid', 'they abet','abet', 'they pull up', 'pull up', 'they advance','advance','they boost', 'boost','they dole', 'dole', 'they subserve', 'subserve','they favor', 'favor','they help out', 'help out', 'they support','support', 'lend a hand', 'tide over', 'help along'],
 'barra': ['bar', 'rod', 'pole', 'stick'],
-'búsquela': ['search for it'],
+'búsquela': ['you search for it','search for it'],
 'cambiar': ['change', 'exchange', 'switch', 'swap', 'swop', 'alter', 'vary', 'swing', 'turn around', 'shift', 'transfer', 'dislocate', 'swap around', 'swap round', 'swap over', 'distort'],
 'clic': ['click', 'snap fastener'],
 'color': ['color', 'flush', 'hue', 'tint', 'dye', 'tail'],
@@ -155,6 +155,7 @@ dictionary = {
 'un': ['a'],
 'una': ['a'],
 'uso': ['use', 'purpose', 'using', 'usage', 'utilization', 'employment', 'fashion', 'wear'],
+'usted':['you'],
 'usuario': ['user', 'reader'],
 'usuario': ['user', 'username','reader'],
 'usuarios': ['users', 'readers'],
