@@ -16,7 +16,7 @@ class Translator:
 		self.tokenizer = Tokenizer()
 		with open(bigram_count_file_name, 'r') as f:
 			self.bigram_model = LaplaceBigramModel(f)
-		with open(bigram_count_file_name, 'r') as f:
+		with open('windows1.txt', 'r') as f:
 			self.unigram_model = LaplaceUnigramModel(f)
 
 	def translate_sentence(self, sentence):
@@ -49,7 +49,11 @@ class Translator:
 			prev_word = current_translation[-2] 	# If the previous token is punctuation, get what's before it
 		for word in candidate_words:
 			# score = self.bigram_model.score([prev_word, word])
+			# print "word: %s" % word
+			# print "bigram score: %d" % self.bigram_model.score([prev_word, word])
+			# print "unigram score: %d" % self.unigram_model.score([word])
 			score = self.bigram_model.score([prev_word, word]) + self.unigram_model.score([word])
+
 			if (score > top_score):
 				best = word
 				top_score = score

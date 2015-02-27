@@ -1,0 +1,336 @@
+Purpose
+Microsoft Windows Installer is an installation and configuration service provided with Windows. The installer service enables customers to provide better corporate deployment and provides a standard format for component management. The installer also enables the advertisement of applications and features according to the operating system. For more information, see Platform Support of Advertisement.
+This documentation describes Windows Installer 5.0 and earlier versions. Not all the capabilities available in later Windows Installer versions are available in earlier versions. This documentation does not describe versions earlier than Windows Installer 2.0. Installation packages and patches that are created for Windows Installer 2.0 can still be installed by using Windows Installer 3.0 and later.
+Windows Installer 3.0 and later, can install multiple patches with a single transaction that integrates installation progress, rollback, and reboots. The installer can apply patches in a specified order regardless of the order that the patches are provided to the system. Patching using Windows Installer 3.0 only updates files affected by the patch and can be significantly faster than earlier installer versions. Patches installed with Windows Installer 3.0 or later can be uninstalled in any order to leave the state of the product the same as if the patch was never installed. Accounts with administrator privileges can use the API of Windows Installer 3.0 and later to query and inventory product, feature, component, and patch information. The installer can be used to read, edit, and replace source lists for network, URL, and media sources. Administrators can enumerate across user and install contexts, and manage source lists from an external process.
+Windows Installer 4.5 and later can install multiple installation packages using transaction processing. If all the packages in the transaction cannot be installed successfully, or if the user cancels the installation, the Windows Installer can roll back changes and restore the computer to its original state. The installer ensures that all the packages belonging to a multiple-package transaction are installed or none of the packages are installed.
+Beginning with Windows Installer 5.0, a package can be authored to secure new accounts, Windows Services, files, folders, and registry keys. The package can specify a security descriptor that denies permissions, specifies inheritance of permissions from a parent resource, or specifies the permissions of a new account. For information, see Securing Resources. The Windows Installer 5.0 service can enumerate all components installed on the computer and obtain the key path for the component. For more information, see Enumerating Components. By Using Services Configuration, Windows Installer 5.0 packages can customize the services on a computer. Setup developers can use Windows Installer 5.0 and Single Package Authoring to develop single installation packages capable of installing an application in either the per-machine or per-user installation context.
+Where applicable
+Windows Installer enables the efficient installation and configuration of your products and applications running on Windows. The installer provides new capabilities to advertise features without installing them, to install products on demand, and to add user customizations.
+Windows Installer 5.0 running on Windows Server 2012 or Windows 8 supports the installation of approved apps on Windows RT. A Windows Installer package, patch, or transform that has not been signed by Microsoft cannot be installed on Windows RT. The Template Summary property indicates the platform that is compatible with an installation database and in this case should include the value for Windows RT.
+Windows Installer is intended for the development of desktop style applications.
+Developer audience
+This documentation is intended for software developers who want to make applications that use Windows Installer. It provides general background information about installation packages and the installer service. It contains complete descriptions of the application programming interface and elements of the installer database. This documentation also contains supplemental information for developers who want to use a table editor or a package creation tool to make or maintain an installation.
+Run-time requirements
+Windows Installer 5.0 will be released with, and require Windows Server 2012, Windows 8, Windows Server 2008 R2 or Windows 7. Versions earlier than Windows Installer 5.0 were released with Windows Server 2008, Windows Vista, Windows Server 2003, Windows XP, and Windows 2000.
+Windows Installer 4.5 requires Windows Server 2008, Windows Vista, Windows XP with Service Pack 2 (SP2) and later, and Windows Server 2003 with Service Pack 1 (SP1) and later.
+Windows Installer 4.0 requires Windows Vista or Windows Server 2008. There is no redistributable for installing Windows Installer 4.0 on other operating systems. An updated version of Windows Installer 4.0, which does not add any new features, is available in Windows Vista with Service Pack 1 (SP1) and Windows Server 2008.
+Windows Installer 3.1 requires Windows Server 2003, Windows XP, or Windows 2000 with Service Pack 3 (SP3).
+Windows Installer 3.0 requires Windows Server 2003, Windows XP, or Windows 2000 with SP3. Windows Installer 3.0 is included in Windows XP with Service Pack 2 (SP2). It is available as a redistributable for Windows 2000 Server with Service Pack 3 (SP3) and Windows 2000 Server with Service Pack 4 (SP4), Windows XP RTM and Windows XP with Service Pack 1 (SP1), and Windows Server 2003 RTM.
+Windows Installer Redistributables are available for Windows Installer 4.5 and some earlier versions. There is no redistributable available for Windows Installer 4.0.
+Windows Installer 2.0 is contained in Windows Server 2003 and Windows XP.
+Windows Installer 2.0 is available as a package for installing or upgrading to Windows Installer 2.0 on Windows 2000. This package should not be used to install or upgrade Windows Installer 2.0 on Windows Server 2003 and Windows XP.
+You can find all the available Windows Installer redistributables at the Microsoft Download Center.
+
+
+
+
+An application that has been installed using the Microsoft Windows Installer can be upgraded by reinstalling an updated installation package (.msi file), or by applying a Windows Installer patch (an .msp file) to the application.
+A Windows Installer patch (.msp file) is a self-contained package that contains the updates to the application and describes which versions of the application can receive the patch. Patches contain at a minimum, two database transforms and can contain patch files that are stored in the cabinet file stream of the patch package. For more information about the parts of a Windows Installer patch package, see Patch Packages.
+Servicing applications by delivering a Windows Installer patch, rather than a complete installation package for the updated product can have advantages. A patch can contain an entire file or only the file bits necessary to update part of the file. This can enable the user to download an upgrade patch that is much smaller than the installation package for the entire product. An update using a patch can preserve a user customization of the application through the upgrade.
+Windows Installer 4.5 and later:  
+Beginning with Windows Installer 4.5, developers can mark components in a patch with the msidbComponentAttributesUninstallOnSupersedence value in the Component table. If a subsequent patch is installed, marked with the msidbPatchSequenceSupersedeEarlier value in its MsiPatchSequence table to supersede the first patch, Windows Installer 4.5 and later can unregister and uninstall components marked msidbComponentAttributesUninstallOnSupersedence to prevent leaving behind unused components on the computer. If the component is not marked with with this bit, installation of the superseding patch can leave an unused component on the computer. Setting the MSIUNINSTALLSUPERSEDEDCOMPONENTS property has the same effect as setting this bit for all components.
+Windows Installer 3.0 and later:  
+Developers who use Windows Installer 3.0, and author patch packages that have the MsiPatchSequence table can create patch packages that do the following:
+Use the product baseline cached by the installer to more easily service applications with smaller delta patches. For more information about using the product baseline, see Reducing Patch Size.
+Skip actions associated with specific tables that are unmodified by the patch. This can significantly reduce the time required to install the patch. For more information about which tables can be skipped, see Patch Optimization.
+Create and install patches that can be uninstalled singly, and in any order, without having to uninstall and reinstall the entire application and other patches. For more information about uninstalling patches, see Removing Patches.
+Apply patches in a constant order regardless of the order that the patches are provided to the system. For more information about how the Windows Installer determines the sequence used to apply patches, see Sequencing Patches.
+Apply patches to an application that has been installed in a per-user-managed context. For more information, see Patching Per-User Managed Applications.
+Windows Installer 2.0:  
+The MsiPatchSequence table is not supported. Beginning with Windows Installer 3.0, patch packages can contain information that describes the patching sequence for the patch relative to other updates and additional descriptive information.
+The recommended method for creating a patch package is to use patch creation tools such as Msimsp.exe and Patchwiz.dll. Developers can generate a patch creation file as described in the section: Creating a Patch Package. The creation of a small update patch is described in the section: A Small Update Patching Example.
+Microsoft Windows Installer accepts a Uniform Resource Locator (URL) as a valid source for a patch. For more information about how to install a patch located on a Web server, see Downloading and Installing a Patch From the Internet.
+A single Windows Installer patch (.msp file) can be applied to the installation package when installing an application for the first time. For more information, see Patching Initial Installations.
+It is not possible to eliminate all circumstances when the application of a patch may require access to the original installation source. However, to minimize the possibility that your patch will require access to the original source, adhere to the points listed in the following section: Preventing a Patch from Requiring Access to the Original Installation Source.
+To minimize the possibility that your patch is not broken by a subsequent customization transform, typically the patch is installed first, followed by the customization. Installing customization transforms first, and then the patch, may break the customization. For more information about patching customized applications, see Patching Customized Applications.
+
+
+
+
+
+UI design can be divided into three essential elements : functionality, aesthetics, and performance.
+More often than not, the primary focus during application development is functionality. Is the application usable? Does it enable users to complete tasks? However, functionality is only a part of the story.
+Aesthetics describe how things are shown and presented, the style in which things are communicated to the user. Aesthetics are very subjective and much more difficult to quantify than functional requirements and performance metrics. Aesthetics typically come down to simple choices—how colors complement each other or how UI elements convey their meaning—that often affect the way a person feels about something and influence how successful they are using it.
+Performance is measured by not only speed, but also reliability. If an application looks and feels great, is easy to use, but crashes repeatedly, it likely won't be very successful. The application has to provide a user with full confidence in its reliability.
+The following are some design phase tasks that can contribute to a successful UI for a Windows application.
+Functional Requirements
+Consider the following suggestions early in the design phase to optimize the user experience across the broadest audience possible:
+Follow UI design guidelines.
+Become familiar with the Windows User Experience Interaction Guidelines and refer to them often as the design, implementation, and testing of the application UI progresses.
+Ensure that the UI is accessible.
+Be sure to integrate accessibility into the UI design from the beginning of the product lifecycle. Retrofitting accessibility can be extremely costly because part of accessibility development requires attention at the architectural level. For more information, download the Engineering Software for Accessibility eBook.
+Support the international marketplace.
+Windows includes technologies that enable support for many cultures and written languages in a Windows application. If the application is targeting the international marketplace, it is important to include internationalization support in the UI design from the beginning of the project. For more information, see Internationalization for Windows Applications.
+User Analysis
+A critical step in designing a successful interface is attaining a basic understanding of what users need and want from an application before writing any code. Remember, potential users of an application are already doing their job in some way and existing tools and processes should be understood as fully as possible. Do not design without fully considering these issues.
+The simplest and most informal approach is talking to the intended users of the product. Get information directly from the source–avoid using managers or executives as proxies for actual consumers. Consider having small groups of developers and program managers pay informal visits to users in their workplaces where there is an opportunity to discuss how they work and gather details of the issues they face with their current tools.
+Remember, do not to ask leading or biased questions as this will directly affect the quality and validity of the user feedback. Keep the following in mind when composing questions during this phase:
+Who are our users? What skills and knowledge do they have?
+What different sources of data can we use to understand their experience?
+What goals and tasks will they use our product to complete?
+What assumptions are we making and how can we verify them?
+What sources of data do we have? (Usability studies and heuristic evaluations are good places to start.)
+Problem Statements
+Once all user feedback has been collected, analyze and distill it into related issues and requirements. Try to avoid thinking about solutions at this point. Make sure the problems are fully identified, not just the symptoms.
+It is often helpful to compose a list of one sentence problem statements (from the users perspective) for each issue or requirement. For example, "Resize edit box width to 15 characters" is not a problem. But "It is too difficult to type in long search terms" is a valid problem statement. The difference is dramatic. Try not to define the solution and the problem at the same time: often the real problem is lost. In this example, there may be many other ways to solve the problem of search terms, including changing the size of the edit box. Always keep alternative solutions in mind.
+The following are additional examples of problem statements:
+It is difficult to navigate from one section of the Web site to another.
+Users have to wait too long for the software to load.
+Our security error messages are difficult to understand.
+The registration page has too many questions, and users often abandon it.
+Finding a specific product on the site index is too hard to complete.
+If the problem statements are broad enough, there are likely to be many innovative and creative ways to solve them.
+Priorities
+The act of taking a list of items, and ranking them by priority, defines a release. Without clear priorities, teams may fight and argue over what things should be done and what things should be cut. The work involved in setting priorities should be easier with the research complete, but it's always a challenge.
+Setting priorities requires the ability to evaluate on at least three criteria: schedule, team, and business. There may be a predefined schedule set for the project, which limits the size and scale of the work that can be done. A problem that is likely to require rewriting half the code-base should not be attempted during a small release cycle.
+The makeup and nature of a team defines what kinds of work can be done. What other commitments does the team have? Is there a designer or usability engineer on the team? What skills with Web or UI design does the team have? Last, and most important, are business considerations. What are the revenue goals for this project? Who are the competitors? What are the advantages of solving certain problems? What partnerships can be forged? Any other considerations should also be identified before prioritizing the list.
+Once prioritized, the list of problem statements sets the direction for the product and ensures that development is targeted in the right areas.
+Conceptual Design
+Typically, the UI is not addressed in the conceptual design phase. However, this phase does require a thorough business model with complete user profiles and usage scenarios which are imperative for a successful user experience.
+Logical Design
+The logical design phase is when the initial prototypes that support the conceptual design are developed.
+The specific hardware and software technologies to be used during development are also identified in this phase, which can determine the capabilities of the UI in the final product. For more information, see User Interface Technologies.
+In addition to the development tools, the various hardware requirements and form factors that are to be targeted by the application should be identified.
+Physical Design
+The physical design phase determines how a UI design is to be implemented for the specific hardware and form factors that were identified in the logical design.
+It is during this phase that hardware or form factor limitations might introduce unexpected constraints on the UI that require significant refinements to the design.
+
+
+
+
+
+Let's create a simple Auto Scaling group designed to contain exactly one EC2 instance. First, you'll create
+a launch configuration that specifies the type of EC2 instance that you want Auto Scaling to create. Next,
+you'll create an Auto Scaling group that references your launch configuration. Finally, you'll verify that
+the Auto Scaling group is functioning.
+If you haven't done so already, you must create a virtual private cloud (VPC) and a security group for
+your VPC. For more information, see Setting Up in the Amazon EC2 User Guide for Linux Instances.
+Create a Launch Configuration
+The launch configuration specifies the type of EC2 instance that Auto Scaling creates for you. To create
+a launch configuration, you must specify an Amazon Machine Image (AMI) ID and an EC2 instance type.
+To create a launch configuration
+1. Open the Amazon EC2 console.
+2. In the navigation pane, click Launch Configurations. If you are new to Auto Scaling, you see a
+welcome page; click Create Auto Scaling group.
+3. Click Create launch configuration.
+4. On the Choose AMI page, click Free tier only, and then select an Amazon Linux AMI with the HVM
+virtualization type.
+5. On the Choose Instance Type page, select the General purpose tab, select the t2.micro instance
+type, and then click Next: Configure details.
+6. On the Configure details page, do the following:
+a. Under Create Launch Configuration, enter a name for your launch configuration (for example,
+my-lc).
+b. Expand Advanced Details, and then select Assign a public IP address to every instance.
+c. Click Skip to review.
+7. On the Review page, click Edit security groups. Click Select an existing security group, select
+the security group that you created for your VPC, and then click Review.
+8. On the Review page, click Create launch configuration.
+API Version 2011-01-01
+2
+Auto Scaling Getting Started Guide
+Create a Launch Configuration9. In the Select an existing key pair or create a new key pair dialog box, select Choose an existing
+key pair, then select an existing key pair. Click the acknowledgment check box, and then click Create
+launch configuration.
+Tip
+If you don't plan to log in to your instance, you can select Proceed without a key pair
+instead. If you'd like to log in to your instance but don't have a key pair already, follow the
+directions to create one.
+Create an Auto Scaling Group
+After you have defined your launch configuration, you are automatically taken to the page to create an
+Auto Scaling group. To create an Auto Scaling group, you must specify a name for your group, a launch
+configuration, one or more Availability Zones, a minimum group size, and a maximum group size. Use
+the launch configuration that you created in the previous procedure. The Availability Zones you choose
+determine the physical location of your Auto Scaling instances. For this example, specify a single zone.
+Set the minimum and maximum size of your Auto Scaling group to 1. Because the minimum size of the
+group is 1, Auto Scaling begins creating an EC2 instance immediately.
+To create an Auto Scaling group
+1. On the Configure Auto Scaling group details page, do the following:
+a. Enter a name for the Auto Scaling group. For example, my-asg.
+b. In Group size, type 1 in the text box.
+c. T2 instances must be launched into a subnet. Select your VPC from the Network list and the
+public subnet from the Subnet list.
+d. Click Next: Configure scaling policies.
+2. On the Configure scaling policies page, click Review.
+3. On the Review page, click Create Auto Scaling group.
+4. Click View your Auto Scaling groups.
+Verify Auto Scaling Group Creation
+First, verify that your instance is ready. From the Auto Scaling Groups page, select your Auto Scaling
+group, and then select the Instances tab. Initially, your instance is in the Pending state. When the state
+is InService, it is ready for use.
+API Version 2011-01-01
+3
+Auto Scaling Getting Started Guide
+Create an Auto Scaling GroupDelete an Auto Scaling Group
+When you are finished, delete the Auto Scaling group. Deleting an Auto Scaling group using the console
+terminates all EC2 instances in the Auto Scaling group. After you delete the Auto Scaling group, you can
+delete the launch configuration.
+To delete the Auto Scaling group
+1. Open the Amazon EC2 console.
+2. In the navigation pane, click Auto Scaling Groups.
+3. Select your Auto Scaling group, click Actions, and then click Delete.
+4. When prompted for confirmation, click Yes, Delete.The values of the Desired, Min, and Max columns
+change to 0 and the EC2 instances enter the terminating state.
+To delete the launch configuration
+1. In the navigation pane, click Launch Configurations.
+2. Select your launch configuration, click Actions, and then click Delete launch configuration.
+3. When prompted for confirmation, click Yes, Delete.
+API Version 2011-01-01
+4
+Auto Scaling Getting Started GuideWhere Do I Go from Here?
+Auto Scaling offers features we haven't covered in this guide, such as setting the desired capacity, creating
+scaling policies, and integrating with CloudWatch, Elastic Load Balancing, and Amazon Simple Notification
+Service.You can also get more information about features like the following in the Auto Scaling Developer
+Guide:
+Health Checks
+A health check is a call to check on the health status of each instance in an Auto Scaling group. If
+an instance reports degraded performance, Auto Scaling terminates the instance and launches
+another one to take its place.
+Triggers
+A trigger is a combination of an Auto Scaling policy and an CloudWatch alarm.You can create alarms
+that monitor specific metrics gathered from an EC2 instance. When paired with an alarm, a policy
+can initiate an Auto Scaling action when a CloudWatch metric breaches a specific threshold.
+Scheduled Updates
+A scheduled update is a call to Auto Scaling that is scheduled for a future time.
+Suspending and Resuming Processes
+You can suspend scaling processes at any time. When you're ready, you can resume any or all of
+the suspended processes. When an Auto Scaling group's scaling processes are suspended, Auto
+Scaling creates no new scaling activities for that group for any reason. Scaling activities that were
+already in progress before the group was suspended continue until complete.
+Resources
+The following related resources can help you as you work with this service.
+• Auto Scaling – The primary web page for information about Auto Scaling.
+• Auto Scaling Technical FAQ – The FAQ covers questions developers have asked about Auto Scaling.
+• Amazon EC2 Discussion Forum – Get help from the community of developers.
+• AWS Developer Tools – Links to developer tools and resources that provide documentation, code
+samples, release notes, and other information to help you build innovative applications with AWS.
+• AWS Support Center – The hub for creating and managing your AWS Support cases. Also includes
+links to other helpful resources, such as forums, technical FAQs, service health status, and AWS
+Trusted Advisor.
+API Version 2011-01-01
+5
+Auto Scaling Getting Started Guide
+Resources• AWS Support – The primary web page for information about AWS Support, a one-on-one, fast-response
+support channel to help you build and run applications in the cloud.
+• Contact Us – A central contact point for inquiries concerning AWS billing, account, events, abuse, and
+other issues.
+• AWS Site Terms – Detailed information about our copyright and trademark; your account, license, and
+site access; and other topics.
+
+
+
+
+
+
+OpenVMS Version 8.3--1H1 for Integrity servers (also known as OpenVMS I64) is a follow-on release that replaces OpenVMS Version 8.3 for Integrity servers. OpenVMS Version 8.3--1H1 includes all the capabilities of its predecessor and introduces new features and hardware support.
+
+Major new features include:
+
+Support for HP BladeSystems c-Class, including new function codes in system services. 
+With the introduction of HP BladeSystems c-Class, HP has revamped the server blade. This effort encompasses Integrity and ProLiant server blades, as well as storage blades, enclosures, and power and cooling solutions. 
+Server blades are built with a modular architecture, in which pieces are added to an enclosure to meet the computing needs of the customer. 
+The enclosure is the metal box that houses the pieces. These enclosures can consist of the following:
+Server blades
+Power supplies
+Fans
+Storage blades
+Onboard administrators
+Interconnect modules
+
+These new server blades are designed to reduce the cost of ownership. You can accomplish this in three primary areas:
+Energy savings
+Configuration and space
+Ease of system management
+Support for the latest Itanium dual-core processors 
+This release supports the latest Intel Itanium 9100-based systems.
+Support for Virtual Connect 
+Virtual Connect is a set of interconnect modules and embedded software for HP BladeSystem c-Class enclosures; it simplifies the setup and administration of server connections. HP Virtual Connect includes the HP 1/10Gb Virtual Connect Ethernet Module for HP BladeSystem c-Class, the HP 4Gb Virtual Connect Fibre Channel Module for HP BladesSystem c-Class, and the HP Virtual Connect Manager. 
+For more information, see
+
+http://h20000.www2.hp.com/bc/docs/support/SupportManual/c00865618/c00865618.pdf
+Support for iSCSI Initiator 
+The iSCSI standard is an emerging Internet Protocol-based storage interconnect standard developed by the Internet Engineering Task Force (IETF). Like Fibre Channel, it is one of a number of standards developed to map the SCSI protocol over a particular transport mechanism.
+System management, including provisioning, providers, and WBEM infrastructure 
+HP Systems Insight Manager (HP SIM) runs as a management server on ProLiant servers running Windows®. OpenVMS can be managed from HP SIM on any of the supported management servers. 
+OpenVMS provides software support in the following management areas so that OpenVMS looks and feels similar to server blades running on HP-UX:
+Provisioning 
+Provisioning is the automatic configuration (or reconfiguration) of BladeSystems. Using HP SIM with the network services provided by the InfoServer utility and TCP/IP Services for OpenVMS (BOOTP), you can install or upgrade up to eight servers simultaneously. You can also use HP SIM with the vMedia feature provided with your Integrity server firmware, in which case you can install or upgrade OpenVMS on one server at a time.
+WBEM Infrastructure 
+This release supports Web Based Enterprise Management (WBEM), whose infrastructure is currently based on OpenPegasus Version 2.5.0. 
+For more information on WBEM Services, refer to sys$help:wbem_services*.release_notes , which is installed with OpenVMS Version 8.3-1H1.
+WBEM Providers (Instance and Method) 
+WBEM Services for OpenVMS Version 2.0 is a component of the base operating system in OpenVMS Version 8.3. The WBEM providers comprise the operating system, computer system, process, CPU, memory, fan and power supply, as well as management processor and enclosure. To be managed by HP SIM, your Integrity server requires HP WBEM (Web-Based Enterprise Management) Services for OpenVMS and the HP WBEM Providers for OpenVMS. For more information, see HP OpenVMS Version 8.3-1H1 for Integrity Servers Upgrade and Installation Manual.
+Services support (WEBES)
+Support for high-speed USB 
+This release of OpenVMS includes High Speed, which increases the data transfer rate from the USB-attached DVDs in the 3600/6600 and 2660 systems as well as on future platforms. High Speed allows data to be read from those DVDs more than ten times faster than from USB 1.0/1.1 speeds.
+Note
+For this release, because the firmware does not yet support High Speed when installing from a DVD, the early stages of the boot are still restricted to USB 1.1 speeds. Until the operating system assumes control of the device, it will run at classic speeds.
+Note
+For systems using USB keyboards and mouse devices, HP strongly recommends that the keyboards and mouse devices be directly connected to the system and not plugged into a high-speed hub. If a hub is needed for other reasons, HP strongly encourages that it is a FULL-speed hub. Plugging low-speed devices like keyboards and mouse devices can have a major performance impact on the performance of the high-speed hub.
+Support for vMedia 
+vMedia is the first in a series of virtual-disk capabilities included in the current generation of management-processor hardware. The first platforms that supported vMedia were the rx3600 and rx6600 followed by the rx2660 and finally the c-Class server blades. vMedia consists of two primary components: firmware in MP hardware that emulates a USB DVD, and Java® code that runs on a remote PC that performs I/O to the PC's local CD/DVD drive. 
+vMedia can be used to do initial system installation on a system without a built-in DVD, or remote installation on a system physically located elsewhere. It also allows the installation of layered products, either remotely or on systems without a built-in DVD.
+Note
+HP recommends installing vMedia from the ISO file instead of directly installing from the DVD.
+Support for Serial Attached SCSI (SAS) tape blade 
+OpenVMS Version 8.3-1H1 supports the HP Storageworks Ultrium 488c and Ultrium 920c tape blade for the C-Class Integrity BladeSystem.
+Note
+SAS tapes must be configured by using the same SYSMAN commands for configuring Fibre Channel tapes (SYSMAN IO FIND_WWID and SYSMAN IO AUTOCONFIGURE). For details, see Section 7.5 of Guidelines for OpenVMS Cluster Configurations.
+Support for VGA Console 
+This release provides a method to boot Integrity systems using a VGA display and a USB keyboard and mouse.
+Note
+The following restrictions apply to VGA Console support for this release:
+This release does not include XDELTA support or conversational boot support. You must set the graphics as a primary console and one serial line as secondary.
+This release has not been tested on and does not support Keyboard Video Mouse (KVM) switches with VGA.
+VGA Console is supported only for a directly connected monitor and does not support the VGA display available in the Integrated Lights-Out 2 (iLO 2) Web interface.
+When using a VGA console and installing from vMedia or a USB DVD drive with the keyboard plugged into a hub, the keyboard might not be configured. In that event, unplug the hub into which the keyboard is plugged and plug it back in. This should be a rare occurrence and HP plans a correction in the next release.
+Installing from an InfoServer is not supported using VGA Console.
+HP recommends that you do not perform a SYSMAN IO AUTO command on systems with a VGA console. If you have booted either minimum or with the SYSGEN parameter NOAUTOCONFIGURE set and need to configure devices HP recommends that you use the /SELECT qualifier and configure a single device at a time. HP hopes to remove this restriction in a future release.
+If you select "no reboot" when executing the shutdown command procedure, the system still reboots. This restriction will be corrected in a future release. If you do not want the system to reboot, you have the following options:
+Wait at the console and intercept the system before it executes your default boot option.
+Use the boot_options command procedure in sys$manager. With this you can perform the following actions:
+Change the TIMEOUT to 0 (never time out) or to a large value to provide time to intercept the reboot.
+Make the EFI Shell the first boot option.
+Create a boot option that does not actually boot the system.
+Installation Utility 
+On all Itanium-based systems, the install utility can install Alpha images. Especially in a mixed-architecture environment, the system manager should be aware of this feature to avoid installing an incorrect image. 
+Beginning with OpenVMS Version 8.3, the INSTALL LIST commmand flags such images with the "A*" prefix when displaying the file name of the known image.
+Smart Array P-800 Lite Support 
+OpenVMS Version 8.3-1H1 supports the Smart Array P-800 Lite P800 (AD335A) 16-port Serial Attached SCSI (SAS) RAID controller PCI Express.
+4-GB Fibre Channel PCIe Adapter Support 
+OpenVMS Version 8.3-1H1 supports 1-port 4Gb Fibre Channel Adapter (AD299A) and 2-port 4-GB Fibre Channel Adapter (AD355A) PCI Express based on the Emulex LPe11002 chip.
+Graceful Shutdown 
+This capability allows you to initiate a "graceful shutdown" from the MP console. OpenVMS then institutes a shutdown, which ends with Primary halted with code HWRPB_HALT$K_POWEROFF . Depending on the platform, this leaves the MP running or actually powers off the system.
+Edgeport/8 and EdgePort/416 Multiplexer Support 
+The Edgeport/8 and Edgeport/416 (8- and 16-line serial multiplexers) from InsideOut Networks (a Digi International Company) have been replaced to meet RoHS (Reduction of Hazardous Substances) directive of the European Union.
+MSA utility 
+MSA utility is an OpenVMS system management tool used for configuring and managing the following controllers:
+HP StorageWorks SmartArray Family of Storage Host Bus Adapters (5300 series, 6400 series, P400, and P800 Lite)
+HP StorageWorks Modular Smart Array Family of Storage Controllers (MSA1000 and MSA1500) 
+These controllers connect to HP StorageWorks Modular Smart Array storage array systems and to Integrity server internal SCSI or SAS drives.
+Note
+You must have the following privileges to use this utility:
+
+ NETMBX, TMPMBX, SYSPRV, DIAGNOSE, PHY_IO
+
+The new devices look identical to the old devices and have the same order numbers; however, the old devices use an ION930 chip while the new devices use the TI (Texas Instruments) TUSB5152 chip. The TUSB5152 is incompatible with the existing OpenVMS device driver. A new device driver provides support for the new devices in a relatively transparent fashion. 
+The new terminal devices will continue to be named TXD and will provide the same performance and capabilities of the old Edgeport devices. New and old Edgeport devices can be mixed in the same system; however, users of the Edgeport/416 might need to check the naming order of TXD devices and rename them if they do not meet their needs.
+1.2 HP Software Technical Support Policy
+Unless otherwise agreed to by Hewlett-Packard Company (HP), HP provides HP Services support for only the current and immediately preceding versions of HP software, and only when the software is used with hardware that is included in HP-specified configurations. A version is defined as a release of a software product that contains new features, enhancements, or maintenance updates.
+
+Current version-level support (Standard Support, or SS) and Prior Version Support (PVS) for OpenVMS operating system software is provided for OpenVMS versions in accordance with these guidelines. The current level of support for recent versions of OpenVMS I64, as well as for Alpha and OpenVMS VAX, is kept up to date on this website:
+
+
+http://www.hp.com/go/openvms/supportchart
+
+The following OpenVMS core products are supported at the same level (SS or PVS) and duration as the operating system version on which they ship:
+
+HP Advanced Server for OpenVMS
+HP DECnet (Phase IV)
+HP DECnet-Plus for OpenVMS
+HP OpenVMS Cluster Client Software
+HP OpenVMS Cluster Software for OpenVMS
+HP RMS Journaling for OpenVMS
+HP TCP/IP Services for OpenVMS
+HP Volume Shadowing for OpenVMS
+These products must be listed as line items on an HP software support agreement in order for you to receive software support on these products. The DECnet Phase IV product requires a Prior Version Support line item.
+

@@ -17,7 +17,7 @@ class LaplaceUnigramModel:
     for line in corpus:
       line = line.split()
       for word in line: 
-        if not self.unigramLapCounts[word]:
+        if self.unigramLapCounts[word] < 2:
           self.total += 1 
         self.unigramLapCounts[word] += 1
 
