@@ -45,7 +45,7 @@ class Translator:
 		translation = self.format(translated_tokens)
 		###########################################################
 		# or as functions of sentence and returning sentence HERE #
-		# translation = self.reverse_noun_adj([translation])		  #
+		translation = self.reverse_noun_adj([translation])		  #
 		###########################################################
 		return translation
 
@@ -97,7 +97,7 @@ class Translator:
 					w = words[i]
 					words[i] = words[i+1]
 					words[i+1] = w
-					# print ">>>> SWITCHED %s and %s" % (w, words[i])
+					print ">>>> SWITCHED %s and %s" % (w, words[i])
 		words = ['^'] + words # stupid hack to make the formatting work
 		# print words
 		s = self.format(words)
