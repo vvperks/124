@@ -35,18 +35,20 @@ def parse(sentences, file_basename, command):
 	root = tree.getroot()
 	parsed_sentences = []
 	for sentence, sentence_node in zip(sentences, root.iter('sentence')):
-		parsed_sentences.append(ParsedSentence(sentence, sentence_node))	
+		parsed_sentences.append(ParsedSentence(sentence, sentence_node))
+	subprocess.call('rm %s' % (file_name), shell=True)
+	subprocess.call('rm %s' % (xml_name), shell=True)
 	return parsed_sentences
 
-def parse_spanish(sentences, file_basename='parsing/spanish/tmp'):
+def parse_spanish(sentences, file_basename='PARSING_TMP'):
 	file_name = file_basename + '.txt'
-	command = 'java -cp "stanford-corenlp-full-2015-01-30/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-spanish.properties -file %s -outputDirectory parsing/spanish -replaceExtension >/dev/null 2>&1' % (file_name)
+	command = 'java -cp "stanford-corenlp-full-2015-01-30/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-spanish.properties -file %s -replaceExtension >/dev/null 2>&1' % (file_name)
 	return parse(sentences, file_basename, command)
 	
 
-def parse_english(sentences, file_basename='parsing/english/tmp'):
+def parse_english(sentences, file_basename='PARSING_TMP'):
 	file_name = file_basename + '.txt'
-	command = 'java -cp "stanford-corenlp-full-2015-01-30/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-english.properties -file %s -outputDirectory parsing/english -replaceExtension >/dev/null 2>&1' % (file_name)
+	command = 'java -cp "stanford-corenlp-full-2015-01-30/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-english.properties -file %s -replaceExtension >/dev/null 2>&1' % (file_name)
 	return parse(sentences, file_basename, command)
 
 class ParsedSentence:
