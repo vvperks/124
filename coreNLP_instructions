@@ -4,13 +4,13 @@ Instructions for getting Stanford CoreNLP up and running on your machine:
 2. Download Stanford CoreNLP using this command in the shell: 
 curl -O "http://nlp.stanford.edu/software/stanford-corenlp-full-2015-01-29.zip"
 or by pointing your browser to that URL. If you do this, make sure you move the zip to the project directory from wherever it gets downloaded to.
-3. Unpack that zip in the project directory.
+3. Unpack that zip in the project directory and rename it stanford-corenlp instead of stanford-corenlp-full-SOME_DATE
 4. Download the spanish language models:
 curl -O "http://nlp.stanford.edu/software/stanford-spanish-corenlp-2015-01-08-models.jar"
 or do it by hand.
 5. Place that .jar file into the stanford-corenlp directory that was created when you unzipped the coreNLP download.
 6. Make sure there is a file in the project directory called .gitignore and if it's not already there, add the line:
-stanford-corenlp-full-2015-01-30/
-where the date matches the date of your stanford-corenlp-full download directory. If you don't do this and then accidentally git add that directory, git will try to upload all that crap to github and it will break and you will have a hard time unbreaking it.
+stanford-corenlp/
+If you don't do this and then accidentally git add that directory, git will try to upload all that crap to github and it will break and you will have a hard time unbreaking it.
 7. Test that everything works by running my sample parsing script as follows:
 python parse.py

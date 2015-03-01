@@ -42,13 +42,13 @@ def parse(sentences, file_basename, command):
 
 def parse_spanish(sentences, file_basename='PARSING_TMP'):
 	file_name = file_basename + '.txt'
-	command = 'java -cp "stanford-corenlp-full-2015-01-30/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-spanish.properties -file %s -replaceExtension >/dev/null 2>&1' % (file_name)
+	command = 'java -cp "stanford-corenlp/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-spanish.properties -file %s -replaceExtension >/dev/null 2>&1' % (file_name)
 	return parse(sentences, file_basename, command)
 	
 
 def parse_english(sentences, file_basename='PARSING_TMP'):
 	file_name = file_basename + '.txt'
-	command = 'java -cp "stanford-corenlp-full-2015-01-30/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-english.properties -file %s -replaceExtension >/dev/null 2>&1' % (file_name)
+	command = 'java -cp "stanford-corenlp/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -props StanfordCoreNLP-english.properties -file %s -replaceExtension >/dev/null 2>&1' % (file_name)
 	return parse(sentences, file_basename, command)
 
 class ParsedSentence:
